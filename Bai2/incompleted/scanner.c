@@ -222,14 +222,21 @@ Token* getToken(void) {
       skipComment();
       return getToken();
     } else if (charCodes[currentChar] == CHAR_PERIOD) {
-      readChar();
-      return makeToken(SB_LSEL, ln, cn);
+      error(ERR_INVALIDSYMBOL, ln, cn);
+      // readChar();
+      // return makeToken(SB_LSEL, ln, cn);
     } else {
       return makeToken(SB_LPAR, ln, cn);
     }
   case CHAR_RPAR:
     readChar();
     return makeToken(SB_RPAR, ln, cn);
+  case CHAR_LSB:
+    readChar();
+    return makeToken(SB_OPEN_BRACKET, ln, cn);
+  case CHAR_RSB:
+    readChar();
+    return makeToken(SB_CLOSE_BRACKET, ln, cn);
   default:
     error(ERR_INVALIDSYMBOL, ln, cn);
     readChar();
@@ -297,6 +304,8 @@ void printToken(Token *token) {
   case SB_ASSIGN_SUBTRACT: printf("SB_ASSIGN_SUBTRACT\n"); break;
   case SB_ASSIGN_TIMES: printf("SB_ASSIGN_TIMES\n"); break;
   case SB_ASSIGN_DIVIDE: printf("SB_ASSIGN_DIVIDE\n"); break;
+  case SB_OPEN_BRACKET: printf("SB_OPEN_BRACKET\n"); break;
+  case SB_CLOSE_BRACKET: printf("SB_CLOSE_BRACKET\n"); break;
   }
 }
 

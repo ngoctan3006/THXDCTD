@@ -1,0 +1,688 @@
+
+
+
+*************************************************************
+Chương trình tìm số finobacci có 51 dòng lênh
+
+Mỗi frame đều có một B và T riêng.
+Với B nằm ở đáy dùng để truy xuất giá trị
+Và T nằm ở đỉnh dùng để cấp phát bộ nhớ
+	T không chỉ cấp phát bộ nhớ để lưu trữ cho biến cục bộ, biến khai báo mà cả các kết quả trung gian trong quá trình tính toán
+
+Khi một hàm con kết thúc, frame được cấp cho nó sẽ được Free
+*************************************************************
+
+J 43	    //Nhảy đến dòng lệnh có address = 43
+		    //Chính là chỗ bắt đầu của main (main không có nhãn nên nhảy đến câu lệnh đầu tiên luôn)
+---------------
+
+compileConstDecls 
+compileTypeDecls 
+compileVarDecls 
+compileType 
+compileType 
+compileSubDecls 
+
+compileProcDecl 
+************************************* Procedure INPUT **********
+
+compileParams 
+compileBlock 
+genJ 
+
+---------------
+
+Final: J 2	// Chỗ này là label INPUT
+		    // Label này sẽ chỉ dẫn cho biết cần nhảy đến dòng lệnh có address = 2: 
+		    // Là khối lệnh đầu tiên của Procedure INPUT
+---------------
+
+compileConstDecls 
+compileTypeDecls 
+compileVarDecls 
+compileSubDecls 
+genINT
+
+---------------
+emitINT 
+2: INT 4	//Khi hàm này được gọi, hàm sẽ được cấp một frame.
+		    //Ban đầu top của frame = base của frame. Trong frame đã có 4 ngăn xếp được cấp cho RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3). Ta phải tăng con trỏ T của frame lên 4, lên đầu frame để chuẩn bị cho việc lưu trữ các biến cục bộ && các giá trị tạm thời khác
+		    //Ở đây lưu ý là Frame đang được sử dụng sẽ luôn nằm ở trên đỉnh của stack chính (lớn nhất)
+---------------
+
+compileStatements 
+compileStatement 
+compileAssignSt 
+compileLValue 
+genVariableAddress
+
+---------------
+emitLA 
+3: LA 1,4	//Load address: (load address của biến n)
+		    //Do n nằm ở ngay scope outer của scope hiện tại, nên level tăng lên 1 
+		    //Level: 1
+		    //Offset: 4 (sau RV(0),DL(1),RA(2),SL(3)) ở frame hiện tại
+---------------
+
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+compileArguments 
+genPredefinedFunctionCall 
+
+---------------
+emitRI 
+4: RI		//Read Integer
+---------------
+
+compileTerm2 
+compileExpression3 
+genST 
+
+---------------
+emitST 
+5: ST		//Store kết quả vào biến n
+---------------
+
+compileStatement 
+genEP 
+
+---------------
+emitEP 
+6: EP		//Exit procedure INPUT
+---------------
+
+
+compileFuncDecl
+************************************* Function Fibonaci ********** 
+compileParams 
+compileParam 
+compileBasicType 
+compileBasicType 
+compileBlock 
+genJ 
+
+---------------
+emitJ 
+7: Final: J 8	// Chỗ này là label Fibonaci
+		        // Label này sẽ chỉ dẫn cho biết cần nhảy đến dòng lệnh có address = 8: 
+		        // Là câu lệnh đầu tiên của Function Fibonaci
+---------------
+
+compileConstDecls 
+compileTypeDecls 
+compileVarDecls 
+compileSubDecls 
+genINT 
+
+---------------
+emitINT 
+8: INT 5	//Khi hàm này được gọi, hàm sẽ được cấp một frame.
+		    //Ban đầu top của frame = base của frame. Trong frame đã có 5 ngăn xếp được cấp cho RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) và 1 đối số n(offset: 4). Ta phải tăng con trỏ T của frame lên 5, lên đầu frame để chuẩn bị cho việc lưu trữ các biến cục bộ && các giá trị tạm thời khác
+		    //Ở đây lưu ý là Frame đang được sử dụng sẽ luôn nằm ở trên đỉnh của stack chính (lớn nhất)
+---------------
+
+compileStatements 
+compileStatement 
+
+######################   If n=1 then Fibonaci:=1; ##################
+
+compileIfSt 
+compileCondition 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genParameterValue 
+
+---------------
+emitLV 
+9: LV 0,4	//Lấy ra giá trị của đối số truyền vào:
+		    //Là đối số -> nằm ở scope hiện tại => Level: 0
+		    //Offset: 4
+		    //s[t]:=s[base(p)+q];
+		    //Tại frame hiện tại, tính từ base - đáy frame đi lên sẽ là RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) rồi sẽ đến nơi lưu đối số truyền vào (offset: 4)
+---------------
+
+compileTerm2 
+compileExpression3 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+10: LC 1	//Load Constant: 1
+---------------
+
+compileTerm2 
+compileExpression3 
+genEQ 
+
+---------------
+emitEQ 
+11: EQ		//Equal
+---------------
+
+genFJ 
+
+---------------
+emitFJ 
+12: FJ 16	//False Jump: 
+		    //Nếu điều kiện là sai nhảy đến lệnh có địa chỉ 16
+---------------
+
+compileStatement 
+compileAssignSt 
+compileLValue 
+genReturnValueAddress 
+
+---------------
+emitLA 
+13: LA 0,0	//Lấy ra vị trí ngăn RV, chuẩn bị gán giá trị vào:
+		    //Là RV -> nằm ở scope hiện tại => Level: 0
+		    //Offset: 0 => RV
+		    //s[t]:=s[base(p)+q];
+		    //Tại frame của scope hiện tại, tính từ base - đáy Frame đi lên sẽ là RV(0), DL(1), RA(2), SL(3). RV nằm ở đáy frame.
+---------------
+
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+14: LC 1	//Load Constant: 1
+---------------
+
+compileTerm2 
+compileExpression3 
+genST 
+
+---------------
+emitST 
+15: ST		//Store 1 to loaded adress
+---------------
+
+compileStatement
+
+######################   If n=2 then Fibonaci:=1; ##################
+
+compileIfSt 
+compileCondition 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genParameterValue 
+
+---------------
+emitLV 
+16: LV 0,4	//Lấy ra giá trị của đối số truyền vào:
+		    //Là đối số -> nằm ở scope hiện tại => Level: 0
+		    //Offset: 4
+		    //s[t]:=s[base(p)+q];
+		    //Tại frame hiện tại, tính từ base - đáy frame đi lên sẽ là RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) rồi sẽ đến nơi lưu đối số truyền vào (offset: 4)
+---------------
+
+compileTerm2 
+compileExpression3 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+17: LC 2	//Load Constant: 2
+---------------
+
+compileTerm2 
+compileExpression3 
+genEQ 
+
+---------------
+emitEQ 
+18: EQ		//Equal
+---------------
+
+genFJ 
+
+---------------
+emitFJ 
+19: 
+First: FJ 0
+Final: FJ 23	//False Jump: 
+		        //Nếu điều kiện là sai nhảy đến lệnh có địa chỉ 23
+---------------
+
+compileStatement 
+compileAssignSt 
+compileLValue 
+genReturnValueAddress 
+
+---------------
+emitLA 
+20: LA 0,0	//Lấy ra vị trí ngăn RV, chuẩn bị gán giá trị vào:
+		    //Là RV -> nằm ở scope hiện tại => Level: 0
+		    //Offset: 0 => RV
+		    //s[t]:=s[base(p)+q];
+		    //Tại frame của scope hiện tại, tính từ base - đáy Frame đi lên sẽ là RV(0), DL(1), RA(2), SL(3). RV nằm ở đáy frame.
+---------------
+
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+21: LC 1	//Load Constant: 1
+---------------
+
+compileTerm2 
+compileExpression3 
+genST 
+
+---------------
+emitST 
+22: ST		//Store 1 to loaded adress
+---------------
+
+compileStatement 
+
+######################   If n>2 then Fibonaci:=Fibonaci(n-1) + Fibonaci(n-2); ##################
+
+compileIfSt 
+compileCondition 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genParameterValue 
+
+---------------
+emitLV 
+23: LV 0,4	    //Lấy ra giá trị của đối số truyền vào:
+		        //Là đối số -> nằm ở scope hiện tại => Level: 0
+		        //Offset: 4
+		        //s[t]:=s[base(p)+q];
+		        //Tại frame hiện tại, tính từ base - đáy frame đi lên sẽ là RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) rồi sẽ đến nơi lưu đối số truyền vào (offset: 4)
+---------------
+
+compileTerm2 
+compileExpression3 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+24: LC 2	//Load Constant: 2
+---------------
+
+compileTerm2 
+compileExpression3 
+genGT 
+
+---------------
+emitGT 
+25: GT		//Greater Than:
+---------------
+
+genFJ 
+
+---------------
+emitFJ 
+26: FJ 42	//False Jump: 
+		    //Nếu điều kiện là sai nhảy đến lệnh có địa chỉ 42
+---------------
+
+compileStatement 
+compileAssignSt 
+compileLValue 
+genReturnValueAddress 
+
+---------------
+emitLA 
+27: LA 0,0	//Lấy ra vị trí ngăn RV, chuẩn bị gán giá trị vào:
+		    //Là RV -> nằm ở scope hiện tại => Level: 0
+		    //Offset: 0 => RV
+		    //s[t]:=s[base(p)+q];
+		    //Tại frame của scope hiện tại, tính từ base - đáy Frame đi lên sẽ là RV(0), DL(1), RA(2), SL(3). RV nằm ở đáy frame.
+---------------
+
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genINT 
+
+---------------
+emitINT 	
+28: INT 4	//Chỗ này là bắt đầu việc gọi hàm Fibonaci
+		    //Sau khi cấp phát 4 ngăn nhớ cho RV, DL, RA ,SL, tạo ra 1 frame mới cho hàm con sắp được gọi, còn cần truyền vào nó đối số. Tăng T của frame hiện tại lên 4 đẻ đến ngăn xếp trống trên đầu của frame mới tạo, chuẩn bị cho việc lưu trữ tham số truyền vào hàm
+		    //Ở đây lưu ý là Frame đang được sử dụng sẽ luôn nằm ở trên đỉnh của stack chính
+---------------
+
+compileArguments 
+compileArgument 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genParameterValue 
+
+---------------
+emitLV 
+29: LV 0,4	//Lấy ra giá trị của đối số truyền vào:
+		//Là đối số -> nằm ở scope hiện tại => Level: 0
+		//Offset: 4
+		//s[t]:=s[base(p)+q];
+		//Tại frame hiện tại, tính từ base - đáy frame đi lên sẽ là RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) rồi sẽ đến nơi lưu đối số truyền vào (offset: 4)
+---------------
+
+compileTerm2 
+compileExpression3 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+30: LC 1	//Load Constant: 1
+---------------
+
+compileTerm2 
+genSB 
+
+---------------
+emitSB 
+31: SB		//Subtract 
+		#Tính (n-1) trước rồi mới thực hiện lệnh gọi hàm Fibonaci
+---------------
+
+compileExpression3 
+genDCT 
+
+---------------
+emitDCT 
+32: DCT 5	//Đưa T trở lại vị trí sẵn sàng. Tý nữa sau khi frame tạo ra cho việc gọi làm Fibonaci ở trên kết thúc, frame con kia được free. Lúc này T của frame này sẽ lại là đang trỏ đến vị trí trên cùng của frame
+		//Từ đây frame con được cung cấp cho chương trình Fibonaci con được gọi ở bên trong chương trình Fibonaci này sẽ được truy cập bằng một con trỏ frame B' và T' khác, không phải B và T của frame này nữa
+---------------
+
+genFunctionCall 
+
+---------------
+emitCALL 
+33: CALL 1,7	//Gọi chương trình con trong chương trình con
+		
+		//s[t+2]:=b; s[t+3]:=pc; s[t+4]:=base(p);b:=t+1; pc:=q;
+		//t ở đây là top của frame hiện tại
+		
+		
+		//s[t+2]:=b; //DL (dynamic link): Sử dụng để hồi phục ngữ cảnh của chương trình gọi (caller) khi chương trình được gọi (callee) kết thúc. Giá trị sẽ bằng base cũ.
+		//s[t+3]:=pc; //RA (return address): Sử dụng để tìm tới lệnh tiếp theo của caller khi callee kết thúc
+		//s[t+4]:=base(p); //SL (static link): Sử dụng để truy nhập các biến phi cục bộ, hay các biến bên ngoài scope hiện tại
+		//b:=t+1; //base mới dùng trong chương trình con đc gọi trỏ đến vị trí t+1, cũng chính là nơi sẽ lưu giá trị trả về từ chương trình con (RV (return value))	
+
+		
+		//Level: 1
+			//Tại vị trí này chương trình đã đi vào trong hàm, scope hiện tại là scope của hàm, level 0. Chiếu theo đó, scope của chương trình hiện tại (đã trở thành cha) sẽ là level 1. Chỗ này là phục vụ cho s[t+4]:=base(p) với p là scope cha - level 1	
+ 
+		//Gán cho thanh ghi PC Địa chỉ của Label (Nhãn hàm): 7 (Tương ứng với nhãn Fibonaci: )
+---------------
+
+compileTerm2 
+compileExpression3 
+compileTerm 
+compileFactor 
+genINT 
+
+---------------
+emitINT 
+34: INT 4	//Chỗ này là bắt đầu việc gọi hàm Fibonaci
+		//Sau khi cấp phát 4 ngăn nhớ cho RV, DL, RA ,SL, tạo ra 1 frame mới cho hàm con sắp được gọi, còn cần truyền vào nó đối số. Tăng T của frame hiện tại lên 4 đẻ đến ngăn xếp trống trên đầu của frame mới tạo, chuẩn bị cho việc lưu trữ tham số truyền vào hàm
+		//Ở đây lưu ý là Frame đang được sử dụng sẽ luôn nằm ở trên đỉnh của stack chính
+---------------
+
+compileArguments 
+compileArgument 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genParameterValue 
+
+---------------
+emitLV 
+35: LV 0,4	//Lấy ra giá trị của đối số truyền vào:
+		//Là đối số -> nằm ở scope hiện tại => Level: 0
+		//Offset: 4
+		//s[t]:=s[base(p)+q];
+		//Tại frame hiện tại, tính từ base - đáy frame đi lên sẽ là RV(offset: 0),DL(offset: 1),RA(offset: 2),SL(offfset: 3) rồi sẽ đến nơi lưu đối số truyền vào (offset: 4)
+---------------
+
+compileTerm2 
+compileExpression3 
+compileTerm 
+compileFactor 
+genLC 
+
+---------------
+emitLC 
+36: LC 2	//Load Constant: 2
+---------------
+
+compileTerm2 
+genSB 
+
+---------------
+emitSB 
+37: SB		//Subtract 
+		#Tính (n-2) trước rồi mới thực hiện lệnh gọi hàm
+---------------
+
+compileExpression3 
+genDCT 
+
+---------------
+emitDCT 
+38: DCT 5	//Đưa T trở lại vị trí sẵn sàng. Tý nữa sau khi frame tạo ra cho việc gọi làm Fibonaci ở trên kết thúc, frame con kia được free. Lúc này T của frame này sẽ lại là đang trỏ đến vị trí trên cùng của frame
+		//Từ đây frame con được cung cấp cho chương trình Fibonaci con được gọi ở bên trong chương trình Fibonaci này sẽ được truy cập bằng một con trỏ frame B' và T' khác, không phải B và T của frame này nữa
+---------------
+
+genFunctionCall 
+
+---------------
+emitCALL 
+39: CALL 1,7	//Gọi chương trình con trong chương trình con
+		
+		//s[t+2]:=b; s[t+3]:=pc; s[t+4]:=base(p);b:=t+1; pc:=q;
+		//t ở đây là top của frame hiện tại
+		
+		
+		//s[t+2]:=b; //DL (dynamic link): Sử dụng để hồi phục ngữ cảnh của chương trình gọi (caller) khi chương trình được gọi (callee) kết thúc. Giá trị sẽ bằng base cũ.
+		//s[t+3]:=pc; //RA (return address): Sử dụng để tìm tới lệnh tiếp theo của caller khi callee kết thúc
+		//s[t+4]:=base(p); //SL (static link): Sử dụng để truy nhập các biến phi cục bộ, hay các biến bên ngoài scope hiện tại
+		//b:=t+1; //base mới dùng trong chương trình con đc gọi trỏ đến vị trí t+1, cũng chính là nơi sẽ lưu giá trị trả về từ chương trình con (RV (return value))	
+
+		
+		//Level: 1
+			//Tại vị trí này chương trình đã đi vào trong hàm, scope hiện tại là scope của hàm, level 0. Chiếu theo đó, scope của chương trình hiện tại (đã trở thành cha) sẽ là level 1. Chỗ này là phục vụ cho s[t+4]:=base(p) với p là scope cha - level 1	
+ 
+		//Gán cho thanh ghi PC Địa chỉ của Label (Nhãn hàm): 7 (Tương ứng với nhãn Fibonaci: )
+---------------
+
+compileTerm2 
+genAD 
+
+---------------
+emitAD 
+40: AD		//Add (+)
+---------------
+
+compileExpression3 
+genST 
+
+---------------
+emitST 
+41: ST		//Store
+		#Lưu tổng hai đối số vào trong địa chỉ vừa lấy ra
+---------------
+
+compileStatement 
+genEF 
+
+---------------
+emitEF 
+42: EF		//Exit function Fibonaci
+---------------
+
+************************************** Bắt đầu chương trình main *****
+genINT 
+
+---------------
+emitINT 
+43: INT 5	
+---------------
+
+compileStatements 
+compileStatement 
+compileCallSt 
+genINT 
+
+---------------
+emitINT 
+44: INT 4	//Chỗ này là bắt đầu việc gọi hàm INPUT
+		//Sau khi cấp phát 4 ngăn nhớ cho RV, DL, RA ,SL, tạo ra 1 frame mới cho hàm con sắp được gọi, còn cần truyền vào nó đối số. Tăng T của stack lên 4 đẻ đến ngăn xếp trống trên đầu của frame mới cấp, chuẩn bị cho việc lưu trữ tham số truyền vào hàma
+---------------
+
+compileArguments 
+genDCT 
+
+---------------
+emitDCT 
+45: DCT 4	//Đưa T trở lại vị trí sẵn sàng. Tý nữa sau khi frame tạo ra cho việc gọi làm INPUT ở trên kết thúc, frame con kia được free. Lúc này T của stack sẽ lại là đang trỏ đến vị trí trên cùng của stack
+		//Từ đây frame con được cung cấp cho chương trình Input con được gọi ở bên trong chương trình Fibonaci này sẽ được truy cập bằng một con trỏ frame B' và T' khác, không phải B và T của stack này nữa
+---------------
+
+genProcedureCall 
+
+---------------
+emitCALL 
+46: CALL 0,1	//Gọi chương trình con
+		//Level: 0
+		//Địa chỉ của Label (Nhãn hàm): 1 (Tương ứng với nhãn hàm INPUT: )
+---------------
+
+compileStatement 
+compileAssignSt 
+compileLValue 
+genVariableAddress 
+
+---------------
+emitLA 
+47: LA 0,5	//Lấy ra địa chỉ của biến:
+		//là scope hiện tại - global scope=> level: 0
+		//Offset: 5 (n có offset là 4, ngay sau là num với offset là 5)
+---------------
+
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genINT 
+
+---------------
+emitINT 
+48: INT 4	//Chỗ này là bắt đầu việc gọi hàm Fibonaci
+		//Sau khi cấp phát 4 ngăn nhớ cho RV, DL, RA ,SL, tạo ra 1 frame mới cho hàm con sắp được gọi, còn cần truyền vào nó đối số. Tăng T của stack lên 4 đẻ đến ngăn xếp trống trên đầu của frame mới cấp, chuẩn bị cho việc lưu trữ tham số truyền vào hàm
+---------------
+
+compileArguments 
+compileArgument 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genVariableValue 
+
+---------------
+emitLV 
+49: LV 0,4	//Load address (address of n variable)
+		//là scope hiện tại - global scope=> level: 0
+		//Offset: 4 (Ngay sau RV,DL,RA,SL)
+---------------
+
+compileTerm2 
+compileExpression3 
+genDCT 
+
+---------------
+emitDCT 
+50: DCT 5	//Đưa T trở lại vị trí sẵn sàng. Tý nữa sau khi frame tạo ra cho việc gọi làm INPUT ở trên kết thúc, frame con kia được free. Lúc này T của stack sẽ lại là đang trỏ đến vị trí trên cùng của stack
+		//Từ đây frame con được cung cấp cho chương trình Input con được gọi ở bên trong chương trình Fibonaci này sẽ được truy cập bằng một con trỏ frame B' và T' khác, không phải B và T của stack này nữa
+---------------
+
+genFunctionCall 
+
+---------------
+emitCALL 
+51: CALL 0,7	//sau khi load value của n thì gọi hàm Fibonaci
+		//Gọi chương trình con
+		//Level: 0
+		//Địa chỉ của Label (Nhãn hàm): 7 (Tương ứng với nhãn Fibonaci: )
+---------------
+
+compileTerm2 
+compileExpression3 
+genST 
+
+---------------
+emitST 
+52: ST		//Store: lưu giá trị trả về vào num
+---------------
+
+compileStatement 
+compileCallSt 
+compileArguments 
+compileArgument 
+compileExpression 
+compileExpression2 
+compileTerm 
+compileFactor 
+genVariableValue 
+
+---------------
+emitLV 
+53: LV 0,5	//Load value: (load value of num variable)
+		//là scope hiện tại - global scope=> level: 0
+		//Offset: 5
+---------------
+
+compileTerm2 
+compileExpression3 
+genPredefinedProcedureCall 
+
+---------------
+emitWRI 
+54: WRI		//Write Integer
+---------------
+
+compileStatement 
+genHL 
+
+---------------
+emitHL 
+55: HL		//Halt: đóng băng, tạm dừng
+---------------
+

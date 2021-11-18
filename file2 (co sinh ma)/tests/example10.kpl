@@ -1,0 +1,24 @@
+program example10;
+var n : integer;
+
+procedure input;
+begin
+    n := readi;
+end;
+
+function luythua( k: integer) : integer;
+var rs : integer;
+    i : integer;
+begin  
+    rs := 1;
+    for i := 1 to k do
+    begin
+        rs := rs * 2;
+    end;
+    luythua := rs;
+end;
+
+begin
+    call input;
+    call writei(luythua(n));
+end.

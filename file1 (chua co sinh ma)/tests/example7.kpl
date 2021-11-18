@@ -1,0 +1,50 @@
+Program Example7;
+    CONST c1 = +10;
+  	      c2 = 'a';
+          c3 = -0.068;
+          c4 = 'hello+-';
+          c5 = 'worlD';
+    
+    TYPE t1 = array(. 10 .) of integer;
+    VAR  v1 : Integer;
+         v2 : Array(. 10 .) of t1;
+         v3 : string;
+         v4 : double;
+
+Function F(p1 : Integer; Var p2 : char; var x : string) : Integer;
+     Begin
+       f := c1 ** 2 ** 4 + c1 ** c1 - c1 / 4;
+       x := 'hi+' + 'hello';
+     End;
+
+Procedure P(v1 : integer);
+    Const  c1 = 'a';
+           c3 = 10;
+            n2 = 'konichiwa'; 
+    Type    t1 = string;
+            t2 = array(. 10 .) of t1;
+    VAR  v2 : t2;
+         v3 : char;
+         t3 : double;
+         x : integer;
+         z : string;
+         y : double;
+    Begin
+	(* v3 := 'a'; 
+    v1 := f(c3,v3); *)
+    v1 := 100 - 10.2;
+    v3, y := 'a', 10.8; 
+    x := 1;
+    switch x
+        begin
+            case 1: z := 'abc'; break;
+            case 2: z := 'xyz'; break;
+            case 3: z := 'hihi'; break;
+            default: z := 'mno';
+        end;
+
+    End;
+
+Begin
+    call p(c1);
+End.

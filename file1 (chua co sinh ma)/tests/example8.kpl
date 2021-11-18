@@ -1,0 +1,10 @@
+program exam;
+var n : double;
+    s : string;
+function F (n : double; s : string) : string;
+begin
+    if n < 0.0 then f:= 'bac' else f := f(n-1, s) + f(n-1, s);
+end;
+begin
+    call writeS(f(10.5,'hello'));
+end.

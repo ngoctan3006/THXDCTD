@@ -1,0 +1,39 @@
+Program example9;
+var n : double;
+procedure input;
+begin
+    n := readi;
+end;
+
+function convertMark(n: double) : string;
+var rs : string;
+begin
+    switch n
+    begin
+        case 10.0:      rs := 'diem la A+';     break;
+        case 9.5:       rs := 'diem la A';      break;
+        case 9.0:       rs := 'diem la A-';     break;
+        case 8.5:       rs := 'diem la B+';     break;
+        case 8.0:       rs := 'diem la B';      break;
+        case 7.5:       rs := 'diem la B-';     break;
+        case 7.0:       rs := 'diem la C+';     break;
+        case 6.5:       rs := 'diem la C';      break;
+        case 6.0:       rs := 'diem la C-';     break;
+        case 5.5:       rs := 'diem la D+';     break;
+        case 5.0:       rs := 'diem la D';      break;
+        case 4.5:       rs := 'diem la D-';     break;
+        case 4.0:       rs := 'diem la E+';     break;
+        case 3.5:       rs := 'diem la E';      break;
+        case 3.0:       rs := 'diem la E-';     break;
+        case 2.5:       rs := 'diem la F+';     break;
+        case 2.0:       rs := 'diem la F';      break;
+        case 1.5:       rs := 'diem la F-';     break;
+        default:        rs := 'diem la none';
+    end;
+End;
+
+Begin
+    call input;
+    call writes(convertMark(n));
+end.
+
